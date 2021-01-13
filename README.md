@@ -49,6 +49,7 @@ Vertical scan is similar to horizontal scan
  ## Resources
  
  The only files that are mine and wich hold the actual implementation of JPS are:
+ 
    framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.cpp
    framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.h
  
