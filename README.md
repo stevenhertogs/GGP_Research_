@@ -36,6 +36,8 @@ Example for Scanning to the right:
 Do a horizontal and a vertical scan
 Go to next diagonal node until (next diagonal node != valid node)
 
+## Example
+![example.png]https://user-images.githubusercontent.com/36840551/104445307-415e7a00-5599-11eb-9c6c-0cc5a39e5f91.png
 
 
 #### References
