@@ -66,4 +66,5 @@ namespace Elite
 	protected:
 		TerrainType m_Terrain;
 	};
+	
 }

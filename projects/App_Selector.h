@@ -1,5 +1,6 @@
 #pragma once
 //Register the app in main.cpp
-#define AStar
+//#define AStar
+#define JPS
 
 

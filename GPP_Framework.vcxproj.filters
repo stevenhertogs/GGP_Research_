@@ -20,6 +20,8 @@
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphEditor.cpp" />
     <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphUtilities\EGraphRenderer.cpp" />
     <ClCompile Include="projects\App_PathfindingAStar\App_PathfindingAStar.cpp" />
+    <ClCompile Include="projects\App_PathfindingJPS\App_PathfindingJPS.cpp" />
+    <ClCompile Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EJPS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="projects\App_Selector.h" />
@@ -83,6 +85,8 @@
     <ClInclude Include="framework\EliteAI\EliteNavigation\EHeuristicFunctions.h" />
     <ClInclude Include="framework\EliteAI\EliteNavigation\ENavigation.h" />
     <ClInclude Include="projects\App_PathfindingAStar\App_PathfindingAStar.h" />
+    <ClInclude Include="framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EJPS.h" />
+    <ClInclude Include="projects\App_PathfindingJPS\App_PathfindingJPS.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="imgui.ini" />

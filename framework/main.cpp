@@ -12,6 +12,10 @@
 #ifdef AStar
 #include "projects/App_PathfindingAStar/App_PathfindingAStar.h"
 #endif // AStar
+#ifdef JPS
+#include "projects/App_PathfindingJPS/App_PathfindingJPS.h"
+#endif // JPS
+
 
 //test github
 
@@ -73,6 +77,10 @@ int main(int argc, char* argv[])
 #ifdef AStar
 		myApp = new App_PathfindingAStar();
 #endif // AStar
+#ifdef JPS
+		myApp = new App_PathfindingJPS();
+#endif // 
+
 
 
 

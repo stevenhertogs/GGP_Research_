@@ -142,6 +142,10 @@ namespace Elite
 	template<class T_NodeType, class T_ConnectionType>
 	inline T_NodeType* IGraph<T_NodeType, T_ConnectionType>::GetNode(int idx) const
 	{
+		if(!((idx < (int)m_Nodes.size()) && (idx >= 0) && "<Graph::GetNode>: invalid index"))
+		{
+			int x = 3;
+		}
 		assert((idx < (int)m_Nodes.size()) && (idx >= 0) &&	"<Graph::GetNode>: invalid index");
 
 		return m_Nodes[idx];
@@ -156,6 +160,18 @@ namespace Elite
 	template<class T_NodeType, class T_ConnectionType>
 	inline T_ConnectionType* IGraph<T_NodeType, T_ConnectionType>::GetConnection(int from, int to) const
 	{
+		if(!((from < (int)m_Nodes.size()) &&
+			(from >= 0) &&
+			m_Nodes[from]->GetIndex() != invalid_node_index &&
+			"<Graph::GetConnection>: invalid 'from' index"))
+			int x = 3;
+
+		if (!((to < (int)m_Nodes.size()) &&
+			(to >= 0) &&
+			m_Nodes[to]->GetIndex() != invalid_node_index &&
+			"<Graph::GetConnection>: invalid 'to' index"))
+			int x = 3;
+
 		assert((from < (int)m_Nodes.size()) &&
 			(from >= 0) &&
 			m_Nodes[from]->GetIndex() != invalid_node_index &&

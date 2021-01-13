@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 //Includes
-#include "App_PathfindingAStar.h"
+#include "App_PathfindingJPS.h"
 #include "framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EAstar.h"
 #include "framework\EliteAI\EliteGraphs\EliteGraphAlgorithms\EBFS.h"
 #include "framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.h"
@@ -10,13 +10,13 @@
 using namespace Elite;
 
 //Destructor
-App_PathfindingAStar::~App_PathfindingAStar()
+App_PathfindingJPS::~App_PathfindingJPS()
 {
 	SAFE_DELETE(m_pGridGraph);
 }
 
 //Functions
-void App_PathfindingAStar::Start()
+void App_PathfindingJPS::Start()
 {
 	//Set Camera
 	DEBUGRENDERER2D->GetActiveCamera()->SetZoom(39.0f);
@@ -27,11 +27,11 @@ void App_PathfindingAStar::Start()
 	//Create Graph
 	MakeGridGraph();
 
-	startPathIdx = 0;
-	endPathIdx = 4;
+	startPathIdx = 2;
+	endPathIdx = 5;
 }
 
-void App_PathfindingAStar::Update(float deltaTime)
+void App_PathfindingJPS::Update(float deltaTime)
 {
 	UNREFERENCED_PARAMETER(deltaTime);
 
@@ -78,7 +78,8 @@ void App_PathfindingAStar::Update(float deltaTime)
 		//A* Pathfinding
 		auto startNode = m_pGridGraph->GetNode(startPathIdx);
 		auto endNode = m_pGridGraph->GetNode(endPathIdx);
-		auto pathfinder = AStar<GridTerrainNode, GraphConnection>(m_pGridGraph, m_pHeuristicFunction);
+		//auto pathfinder = AStar<GridTerrainNode,GraphConnection>(m_pGridGraph, m_pHeuristicFunction);
+		auto pathfinder = JPS(m_pGridGraph, m_pHeuristicFunction);
 		m_vPath = pathfinder.FindPath(startNode, endNode);
 
 		m_UpdatePath = false;
@@ -86,7 +87,7 @@ void App_PathfindingAStar::Update(float deltaTime)
 	}
 }
 
-void App_PathfindingAStar::Render(float deltaTime) const
+void App_PathfindingJPS::Render(float deltaTime) const
 {
 	UNREFERENCED_PARAMETER(deltaTime);
 	//Render grid
@@ -118,14 +119,12 @@ void App_PathfindingAStar::Render(float deltaTime) const
 	
 }
 
-void App_PathfindingAStar::MakeGridGraph()
+void App_PathfindingJPS::MakeGridGraph()
 {
-	m_pGridGraph = new GridGraph<GridTerrainNode, GraphConnection>(COLUMNS, ROWS, m_SizeCell, false, false, 1.f, 1.5f);
-	//m_pGridGraph->IsolateNode(6);
-	//m_pGridGraph->GetNode(7)->SetTerrainType(TerrainType::Mud);
+	m_pGridGraph = new GridGraph<GridTerrainNode, GraphConnection>(COLUMNS, ROWS, m_SizeCell, false, true, 1.f, 1.5f);
 }
 
-void App_PathfindingAStar::UpdateImGui()
+void App_PathfindingJPS::UpdateImGui()
 {
 #ifdef PLATFORM_WINDOWS
 #pragma region UI

@@ -28,6 +28,32 @@ namespace Elite
 
 		bool IsWithinBounds(int col, int row) const;
 		int GetIndex(int col, int row) const { return row * m_NrOfColumns + col; }
+		int GetRow(int index) const { return index / m_NrOfColumns; }
+		int GetCol(int index) const { return index % m_NrOfColumns; }
+		int GetIndexBelow(int index) const { return index - m_NrOfColumns; }
+		int GetIndexAbove(int index) const { return index + m_NrOfColumns; }
+		int GetNextIndex(int index, int xDir, int yDir)
+		{
+			index += xDir;
+			if (yDir == 1)
+			{
+				index = GetIndexAbove(index);
+			}
+			else if (yDir == -1)
+			{
+				index = GetIndexBelow(index);
+			}
+
+			return index;
+		}
+		bool IsValidIndex(int index)
+		{			
+			if (index < m_NrOfRows*m_NrOfColumns  && index > 0)
+			{
+				return true;
+			}
+			return false;
+		}
 
 		// returns the column and row of the node in a Vector2
 		using IGraph::GetNodePos;
