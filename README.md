@@ -1,6 +1,4 @@
-# Jump Point Search
-
-## JPS
+**Jump Point Search**
 ## Whats Is Jump Point Search?
 Jump Point Search (JPS) is an improvement on the A* algorithm for grids with uniform costs.
 JPS searches potentially larger areas then A* but spends much less time updating the open and closed lists.
