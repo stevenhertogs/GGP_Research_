@@ -45,13 +45,15 @@ Vertical scan is similar to horizontal scan
  https://www.gamedev.net/tutorials/programming/artificial-intelligence/jump-point-search-fast-a-pathfinding-for-uniform-cost-grids-r4220/
  
  # Implementation
+  My goal was to implement the JPS algorithm into an existing framework used for college.
  ## Resources
  
  The only files that are mine and wich hold the actual implementation of JPS are:
- framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.cpp
- framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.h
+   framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.cpp
+   framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.h
  
  All the other files are credited towards the college Digtial Arts And Entertainment.
+
  
  
 
