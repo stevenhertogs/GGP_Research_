@@ -1,2 +1,3 @@
-# GGP_Research_
-test
+# Jump Point Search Algorithm
+
+**JUMP POINT SEARCH**
