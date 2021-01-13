@@ -39,10 +39,9 @@ Example for Scanning to the right:
 ## Example
 ![example.png](https://user-images.githubusercontent.com/36840551/104445307-415e7a00-5599-11eb-9c6c-0cc5a39e5f91.png)
 
-## Application Exampe
+## Application Example
 ![app_example](https://user-images.githubusercontent.com/36840551/104467364-893fca00-55b6-11eb-9bed-0664abd15b16.png)
 
-
 #### References
-*https://zerowidth.com/2013/a-visual-explanation-of-jump-point-search.html
-*https://www.gamedev.net/tutorials/programming/artificial-intelligence/jump-point-search-fast-a-pathfinding-for-uniform-cost-grids-r4220/
+ https://zerowidth.com/2013/a-visual-explanation-of-jump-point-search.html
+ https://www.gamedev.net/tutorials/programming/artificial-intelligence/jump-point-search-fast-a-pathfinding-for-uniform-cost-grids-r4220/
