@@ -10,11 +10,11 @@ The following example shows how in a uniform grid there can be a lot of differen
 ![xd.png](https://user-images.githubusercontent.com/36840551/104440916-402a4e80-5593-11eb-8593-2a7bf8fd80c6.png)
 
 ## Algorithm ##
-  The algorithm is largely the same as A*, only finding points
-  When getting the node with the lowest estimated cost from the open list, we do a scan along its direction to find and add jumpPoints.
-  Our NodeStructs have a direction to know in what direction to scan. We can have multiple same nodes on the openlist, but with different directions
-  They also have a parent node (node where they jumped from) in order to backtrack our path
-  Once end goal is reached, use parent nodes to back and find path
+* The algorithm is largely the same as A*, only finding points
+* When getting the node with the lowest estimated cost from the open list, we do a scan along its direction to find and add jumpPoints.
+* Our NodeStructs have a direction to know in what direction to scan. We can have multiple same nodes on the openlist, but with different directions
+* They also have a parent node (node where they jumped from) in order to backtrack our path
+* Once end goal is reached, use parent nodes to back and find path
   
   
 ## Horizontal Scan
