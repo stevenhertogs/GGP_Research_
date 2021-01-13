@@ -12,8 +12,7 @@ The following example shows how in a uniform grid there can be a lot of differen
 ## Algorithm ##
 * The algorithm is largely the same as A*. The main difference is in finding points to add to the open list
 * When getting the node with the lowest estimated cost from the open list, we do a scan along its direction to find and add jumpPoints.
-* Our NodeStructs have a direction to know in what direction to scan. We can have multiple same nodes on the openlist, but with different directions
-* They also have a parent node (node where they jumped from) in order to backtrack our path
+* Our NodeStructs have a direction to know in what direction to scan. We can have multiple same nodes on the openlist, but with different directions. They also have a parent node (node where they jumped from) in order to backtrack our path
 * Once end goal is reached, use parent nodes to back and find path
   
   
@@ -37,7 +36,7 @@ Do a horizontal and a vertical scan
 Go to next diagonal node until (next diagonal node != valid node)
 
 ## Example
-![example.png]https://user-images.githubusercontent.com/36840551/104445307-415e7a00-5599-11eb-9c6c-0cc5a39e5f91.png
+![example.png](https://user-images.githubusercontent.com/36840551/104445307-415e7a00-5599-11eb-9c6c-0cc5a39e5f91.png)
 
 
 #### References
