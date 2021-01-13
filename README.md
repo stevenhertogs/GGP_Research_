@@ -31,9 +31,9 @@ Example for Scanning to the right:
 //Vertical scan is similar to horizontal scan
 
 ## Diagonal Scan
-
-* Do a horizontal and a vertical scan
 * Go to next diagonal node along direction
+* Check if diagonal node is jumpNode (like image above but for diag jump)
+* Do a horizontal and a vertical scan
 * repeat (until next diagonal node != valid node)
 
 ## Example
