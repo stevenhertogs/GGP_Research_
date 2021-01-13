@@ -1,5 +1,4 @@
 # Jump Point Search #
-
 ## Whats Is Jump Point Search? ##
 Jump Point Search (JPS) is an improvement on the A* algorithm for grids with uniform costs.
 Instead of adding a new node to the openlist every iteration, we can expand our search until we find nodes that are "interesting".
@@ -41,9 +40,18 @@ Vertical scan is similar to horizontal scan
 ## Example
 ![example.png](https://user-images.githubusercontent.com/36840551/104445307-415e7a00-5599-11eb-9c6c-0cc5a39e5f91.png)
 
-## Application Example
-![app_example](https://user-images.githubusercontent.com/36840551/104467364-893fca00-55b6-11eb-9bed-0664abd15b16.png)
-
 #### References
  https://zerowidth.com/2013/a-visual-explanation-of-jump-point-search.html
  https://www.gamedev.net/tutorials/programming/artificial-intelligence/jump-point-search-fast-a-pathfinding-for-uniform-cost-grids-r4220/
+ 
+ # Implementation
+ ## Resources
+ 
+ The only files that are mine and wich hold the actual implementation of JPS are:
+ framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.cpp
+ framework/EliteAI/EliteGraphs/EliteGraphAlgorithms/EJPS.h
+ 
+ All the other files are credited towards the college Digtial Arts And Entertainment.
+ 
+ 
+
