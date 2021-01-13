@@ -28,7 +28,7 @@ Example for Scanning to the right:
 * if(c2 != valid node && c3 == valid node) add b2 to openList with direction c3
 * Repeat
 
-//Vertical scan is similar to horizontal scan
+Vertical scan is similar to horizontal scan
 
 ## Diagonal Scan
 * Go to next diagonal node along direction
