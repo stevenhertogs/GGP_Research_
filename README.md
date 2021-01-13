@@ -31,8 +31,10 @@ Example for Scanning to the right:
 Vertical scan is similar to horizontal scan
 
 ## Diagonal Scan
+![diagScan](https://user-images.githubusercontent.com/36840551/104468196-75e12e80-55b7-11eb-8b7c-fde33e8ab6e5.png)
+
 * Go to next diagonal node along direction
-* Check if diagonal node is jumpNode (like image above but for diag jump)
+* Check if diagonal node is jumpNode 
 * Do a horizontal and a vertical scan
 * repeat (until next diagonal node != valid node)
 
