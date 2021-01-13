@@ -14,7 +14,7 @@ void Elite::JPS::ScanJumpPoints(NodeRecord& nodeRec, GridTerrainNode* pGoalNode,
 	}
 	else
 	{
-		DiagonalScan(nodeRec, pGoalNode, openList,closed_list);
+		DiagonalScan(nodeRec, pGoalNode, openList, closed_list);
 	}
 }
 
@@ -22,19 +22,21 @@ std::vector<Elite::GridTerrainNode*> Elite::JPS::FindPath(GridTerrainNode* pStar
 {
 	std::list<NodeRecord> openList;
 	std::map<GridTerrainNode*, NodeRecord> closedList;
-	auto x = m_pGraph->GetNodeConnections(pStartNode->GetIndex());
-	//get start neighbours
-	for (GraphConnection* con : m_pGraph->GetNodeConnections(pStartNode->GetIndex()))
-	{
-		NodeRecord nr{};
-		nr.pNode = m_pGraph->GetNode(con->GetTo());
-		nr.costSoFar = con->GetCost();
-		nr.estimatedTotalCost = nr.costSoFar + GetHeuristicCost(nr.pNode, pGoalNode);
-		nr.pParent = pStartNode;
-		nr.xDir = m_pGraph->GetCol(con->GetTo()) - m_pGraph->GetCol(con->GetFrom());
-		nr.yDir = m_pGraph->GetRow(con->GetTo()) - m_pGraph->GetRow(con->GetFrom());
+	NodeRecord start{};
+	start.pNode = pStartNode;
+	start.costSoFar = 0;
+	start.estimatedTotalCost = GetHeuristicCost(pStartNode, pGoalNode);
+	start.pParent = nullptr;
 
-		openList.push_back(nr);
+	//setup start
+	for (int x{ -1 }; x <= 1; ++x)
+	{
+		for (int y{ -1 }; y <= 1; ++y)
+		{
+			start.xDir = x;
+			start.yDir = y;
+			openList.push_back(start);
+		}
 	}
 
 	//begin algorithm
@@ -44,7 +46,7 @@ std::vector<Elite::GridTerrainNode*> Elite::JPS::FindPath(GridTerrainNode* pStar
 		auto nextRecordIt = std::min_element(openList.begin(), openList.end());
 		auto nextRecord = *nextRecordIt;
 		openList.erase(nextRecordIt);
-		closedList[nextRecord.pNode] = nextRecord;
+		PushNodeToClosedListIfBetterHeuristic(nextRecord.pNode, nextRecord, closedList);
 
 		//check if goal found
 		if (nextRecord.pNode == pGoalNode)
@@ -52,7 +54,7 @@ std::vector<Elite::GridTerrainNode*> Elite::JPS::FindPath(GridTerrainNode* pStar
 			break;
 		}
 
-		ScanJumpPoints(nextRecord, pGoalNode, openList,closedList);
+		ScanJumpPoints(nextRecord, pGoalNode, openList, closedList);
 	}
 
 	//check if goal found
@@ -62,7 +64,7 @@ std::vector<Elite::GridTerrainNode*> Elite::JPS::FindPath(GridTerrainNode* pStar
 	}
 	std::vector<GridTerrainNode*> path;
 	GridTerrainNode* currentNode = pGoalNode;
-	
+
 	while (currentNode != pStartNode)
 	{
 		path.push_back(currentNode);
@@ -86,11 +88,11 @@ std::vector<Elite::GridTerrainNode*> Elite::JPS::FindPath(GridTerrainNode* pStar
 			xDir = -1;
 		if (toRow - fromRow > 0)
 			yDir = 1;
-		else if(toRow - fromRow < 0)
+		else if (toRow - fromRow < 0)
 			yDir = -1;
 
 
-		int nextIdx = m_pGraph->GetNextIndex(fromIdx,xDir, yDir);
+		int nextIdx = m_pGraph->GetNextIndex(fromIdx, xDir, yDir);
 		while (nextIdx != toIdx)
 		{
 			path.push_back(m_pGraph->GetNode(nextIdx));
@@ -117,7 +119,7 @@ bool Elite::JPS::HorizontalScan(NodeRecord start, GridTerrainNode* pGoalNode, st
 	if (pCon == nullptr || !pCon->IsValid())
 		return false;
 	float conCost = pCon->GetCost();
-
+	bool nodeFound{ false };
 	while (true)
 	{
 		//If no next node
@@ -142,13 +144,13 @@ bool Elite::JPS::HorizontalScan(NodeRecord start, GridTerrainNode* pGoalNode, st
 		}
 
 		//if next node is interesting
-		bool nodeFound{ false };
+
 		//down
 		int obstacleIndex = m_pGraph->GetIndexBelow(nextIndex);
 		int freeIndex = obstacleIndex + start.xDir;
 
 		if (m_pGraph->IsValidIndex(freeIndex) && m_pGraph->IsValidIndex(obstacleIndex))
-		{	
+		{
 
 			if (!IsWaterNode(freeIndex) && IsWaterNode(obstacleIndex))
 			{
@@ -169,22 +171,20 @@ bool Elite::JPS::HorizontalScan(NodeRecord start, GridTerrainNode* pGoalNode, st
 				nodeFound = true;
 			}
 		}
-		if (nodeFound == true)
-			return true;
 
 		//repeat
 		startIndex = nextIndex;
 		nextIndex = startIndex + start.xDir;
 		if (!m_pGraph->IsValidIndex(nextIndex))
-			return false;
+			return nodeFound;
 		if (IsWaterNode(nextIndex))
-			return false;
-		auto pCon =  m_pGraph->GetConnection(startIndex, nextIndex);
+			return nodeFound;
+		auto pCon = m_pGraph->GetConnection(startIndex, nextIndex);
 		if (!pCon || !pCon->IsValid())
-			return false;
+			return nodeFound;
 		conCost += pCon->GetCost();
 	}
-	return false;
+	return nodeFound;
 }
 
 bool Elite::JPS::VerticalScan(NodeRecord start, GridTerrainNode* pGoalNode, std::list<NodeRecord>& openList)
@@ -208,17 +208,17 @@ bool Elite::JPS::VerticalScan(NodeRecord start, GridTerrainNode* pGoalNode, std:
 	if (pCon == nullptr || !pCon->IsValid())
 		return false;
 	float conCost = pCon->GetCost();
-
+	bool nodeFound = false;
 	while (true)
 	{
 		//If no right node
 		if (pCon == nullptr || !pCon->IsValid())
 		{
-			return false;
+			return nodeFound;
 		}
 
 		if (IsWaterNode(nextIndex))
-			return false;
+			return nodeFound;
 
 		NodeRecord nextNodeRec{};
 		nextNodeRec.pNode = m_pGraph->GetNode(nextIndex);
@@ -235,17 +235,16 @@ bool Elite::JPS::VerticalScan(NodeRecord start, GridTerrainNode* pGoalNode, std:
 		}
 
 		//if node is interesting
-		bool nodeFound{ false };
 		//right
 		int obstacleIndex = nextIndex + 1;
 		int freeIndex{};
 		if (start.yDir == 1)
 		{
-			 freeIndex = m_pGraph->GetIndexAbove(obstacleIndex);
+			freeIndex = m_pGraph->GetIndexAbove(obstacleIndex);
 		}
 		else if (start.yDir == -1)
 		{
-			 freeIndex = m_pGraph->GetIndexBelow(obstacleIndex);
+			freeIndex = m_pGraph->GetIndexBelow(obstacleIndex);
 		}
 		if (m_pGraph->IsValidIndex(obstacleIndex) && m_pGraph->IsValidIndex(freeIndex))
 		{
@@ -257,7 +256,7 @@ bool Elite::JPS::VerticalScan(NodeRecord start, GridTerrainNode* pGoalNode, std:
 				nodeFound = true;
 			}
 		}
-		
+
 		//left
 		obstacleIndex = nextIndex - 1;
 		if (start.yDir == 1)
@@ -278,8 +277,6 @@ bool Elite::JPS::VerticalScan(NodeRecord start, GridTerrainNode* pGoalNode, std:
 				nodeFound = true;
 			}
 		}
-		if (nodeFound)
-			return true;
 
 		//repeat
 		startIndex = nextIndex;
@@ -293,104 +290,107 @@ bool Elite::JPS::VerticalScan(NodeRecord start, GridTerrainNode* pGoalNode, std:
 		}
 
 		if (!m_pGraph->IsValidIndex(nextIndex))
-			return false;
+			return nodeFound;
+		if (IsWaterNode(nextIndex))
+			return nodeFound;
 
 		pCon = m_pGraph->GetConnection(startIndex, nextIndex);
 		if (pCon == nullptr || !pCon->IsValid())
 		{
-			return false;
+			return nodeFound;
 		}
 		conCost += pCon->GetCost();
 	}
-	return false;
+	return nodeFound;
 }
 
-void Elite::JPS::DiagonalScan(NodeRecord start, GridTerrainNode* pGoalNode, std::list<NodeRecord>& openList, std::map<GridTerrainNode*,NodeRecord>& closed_list)
+void Elite::JPS::DiagonalScan(NodeRecord start, GridTerrainNode* pGoalNode, std::list<NodeRecord>& openList, std::map<GridTerrainNode*, NodeRecord>& closed_list)
 {
 	NodeRecord currentNode = start;
 	bool nodeFound = false;
+
 	while (true)
 	{
-		if (HorizontalScan(currentNode, pGoalNode, openList))
-		{
-			closed_list[currentNode.pNode] = currentNode;
-			nodeFound = true;
-		}
-		if (VerticalScan(currentNode, pGoalNode, openList))
-		{
-			closed_list[currentNode.pNode] = currentNode;
-			nodeFound = true;
-		}
-
-		//next diagonal node
 		NodeRecord nextNodeRec;
-		if (GetNextDiagonalNodeRecord(currentNode, nextNodeRec))
-		{
-			nextNodeRec.pParent = start.pNode;
-			nextNodeRec.estimatedTotalCost = nextNodeRec.costSoFar + GetHeuristicCost(nextNodeRec.pNode, pGoalNode);
-
-			//if goal node
-			if (nextNodeRec.pNode == pGoalNode)
-			{
-				openList.push_back(nextNodeRec);
-				return;
-			}
-
-			//int nextIndex = nextNodeRec.pNode->GetIndex();
-
-			////check if interesting node
-			////check vertical
-			//int obstacleIndex = nextIndex - start.xDir;
-			//int freeIndex{};
-			//if (start.yDir == 1)
-			//{
-			//	freeIndex = m_pGraph->GetIndexAbove(obstacleIndex);
-			//}
-			//else if (start.yDir == -1)
-			//{
-			//	freeIndex = m_pGraph->GetIndexBelow(obstacleIndex);
-			//}
-			//if (m_pGraph->IsValidIndex(freeIndex) && m_pGraph->IsValidIndex(obstacleIndex))
-			//{
-			//	if (!IsWaterNode(freeIndex) && IsWaterNode(obstacleIndex))
-			//	{
-			//		nextNodeRec.xDir = 0;
-			//		openList.push_front(nextNodeRec);
-			//		nodeFound = true;
-			//	}
-			//}
-
-			////check horizontal
-			//if (start.yDir == 1)
-			//{
-			//	obstacleIndex = m_pGraph->GetIndexBelow(nextIndex);
-			//}
-			//else if (start.yDir == -1)
-			//{
-			//	obstacleIndex = m_pGraph->GetIndexAbove(nextIndex);
-			//}
-			//freeIndex = obstacleIndex + start.xDir;
-
-			//if (m_pGraph->IsValidIndex(freeIndex) && m_pGraph->IsValidIndex(obstacleIndex))
-			//{
-			//	if (!IsWaterNode(freeIndex) && IsWaterNode(obstacleIndex))
-			//	{
-			//		nextNodeRec.yDir = 0;
-			//		openList.push_front(nextNodeRec);
-			//		nodeFound = true;
-			//	}
-			//}
-
-			//if (nodeFound)
-			//	return;
-
-			//repeat
-			currentNode = nextNodeRec;
-		}
-		else
-		{
+		if (!GetNextDiagonalNodeRecord(currentNode, nextNodeRec))
 			return;
-		}	
+		nextNodeRec.pParent = start.pNode;
+		nextNodeRec.estimatedTotalCost = nextNodeRec.costSoFar + GetHeuristicCost(nextNodeRec.pNode, pGoalNode);
+
+		//if goal node
+		if (nextNodeRec.pNode == pGoalNode)
+		{
+			openList.push_back(nextNodeRec);
+			return;
+		}
+
+		//check if interesting node
+		//check vertical
+		int nextIndex = nextNodeRec.pNode->GetIndex();
+		int obstacleIndex = nextIndex - start.xDir;
+		int freeIndex{};
+		if (start.yDir == 1)
+		{
+			freeIndex = m_pGraph->GetIndexAbove(obstacleIndex);
+		}
+		else if (start.yDir == -1)
+		{
+			freeIndex = m_pGraph->GetIndexBelow(obstacleIndex);
+		}
+		if (m_pGraph->IsValidIndex(freeIndex) && m_pGraph->IsValidIndex(obstacleIndex))
+		{
+			if (!IsWaterNode(freeIndex) && IsWaterNode(obstacleIndex))
+			{
+				if (closed_list.find(m_pGraph->GetNode(freeIndex)) != closed_list.end())
+					return;
+				NodeRecord newNode = nextNodeRec;
+				newNode.xDir = -start.xDir;
+				newNode.yDir = start.yDir;
+				openList.push_front(newNode);
+				nodeFound = true;
+			}
+		}
+
+		//check horizontal
+		if (start.yDir == 1)
+		{
+			obstacleIndex = m_pGraph->GetIndexBelow(nextIndex);
+		}
+		else if (start.yDir == -1)
+		{
+			obstacleIndex = m_pGraph->GetIndexAbove(nextIndex);
+		}
+		freeIndex = obstacleIndex + start.xDir;
+
+		if (m_pGraph->IsValidIndex(freeIndex) && m_pGraph->IsValidIndex(obstacleIndex))
+		{
+			if (!IsWaterNode(freeIndex) && IsWaterNode(obstacleIndex))
+			{
+				if (closed_list.find(m_pGraph->GetNode(freeIndex)) != closed_list.end())
+					return;
+				NodeRecord newNode = nextNodeRec;
+				newNode.xDir = start.xDir;
+				newNode.yDir = -start.yDir;
+				openList.push_front(newNode);
+				nodeFound = true;
+			}
+		}
+
+		//hor scan
+
+		if (HorizontalScan(nextNodeRec, pGoalNode, openList))
+		{
+			PushNodeToClosedListIfBetterHeuristic(nextNodeRec.pNode, nextNodeRec, closed_list);
+		}
+
+		//vert scan
+		if (VerticalScan(nextNodeRec, pGoalNode, openList))
+		{
+			PushNodeToClosedListIfBetterHeuristic(nextNodeRec.pNode, nextNodeRec, closed_list);
+		}
+
+		//repeat
+		currentNode = nextNodeRec;
 	}
 }
 
@@ -428,4 +428,24 @@ bool Elite::JPS::GetNextDiagonalNodeRecord(NodeRecord prev, NodeRecord& nextRec)
 	nextRec.yDir = prev.yDir;
 
 	return true;
+}
+
+bool Elite::JPS::PushNodeToClosedListIfBetterHeuristic(GridTerrainNode* node, NodeRecord rec, std::map<GridTerrainNode*, NodeRecord>& closed_list)
+{
+	if (closed_list.find(node) == closed_list.end())
+	{
+		closed_list[node] = rec;
+		return true;
+	}
+	else
+	{
+		if (closed_list[node].estimatedTotalCost >= rec.estimatedTotalCost)
+		{
+			closed_list[node] = rec;
+			return true;
+		}
+		return false;
+	}
+	return false;
+
 }

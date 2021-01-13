@@ -9,7 +9,7 @@ namespace Elite
 	class JPS
 	{
 	public:
-		JPS(GridGraph<GridTerrainNode, GraphConnection>* pGraph, Heuristic hFunction) 
+		JPS(GridGraph<GridTerrainNode, GraphConnection>* pGraph, Heuristic hFunction)
 			: m_pGraph(pGraph)
 			, m_HeuristicFunction(hFunction)
 		{
@@ -59,6 +59,7 @@ namespace Elite
 		void DiagonalScan(NodeRecord start, GridTerrainNode* pGoalNode, std::list<NodeRecord>& openList, std::map<GridTerrainNode*, NodeRecord>& closed_list);
 		bool GetNextDiagonalNodeRecord(NodeRecord start, NodeRecord& nextRec);
 		bool IsWaterNode(int index) { return m_pGraph->GetNode(index)->GetTerrainType() == TerrainType::Water; }
-	
+		bool PushNodeToClosedListIfBetterHeuristic(GridTerrainNode* node, NodeRecord rec, std::map<GridTerrainNode*, NodeRecord>& closed_list);
+
 	};
 }
